@@ -3,9 +3,12 @@ package com.example;
 import com.sforce.soap.partner.Connector;
 import com.sforce.soap.partner.LoginResult;
 import com.sforce.soap.partner.PartnerConnection;
+import com.sforce.soap.partner.QueryResult;
 import com.sforce.soap.partner.fault.ApiFault;
 import com.sforce.ws.ConnectionException;
 import com.sforce.ws.ConnectorConfig;
+
+import java.util.Arrays;
 
 public class SalesforceSoapStarter {
 
@@ -40,8 +43,9 @@ public class SalesforceSoapStarter {
             partnerConnection.getConfig().setServiceEndpoint(loginResult.getServerUrl());
             partnerConnection.setSessionHeader(loginResult.getSessionId());
 
-            System.out.println("Describing Contact SObject");
-            System.out.println(partnerConnection.describeSObject("Contact").toString());
+            System.out.println("Querying Contacts");
+            final QueryResult queryResult = partnerConnection.query("SELECT Id, Name FROM Contact");
+            Arrays.stream(queryResult.getRecords()).forEach(System.out::println);
         }
         catch (ApiFault e) {
             System.out.println("Could not connect to Salesforce: " + e.getExceptionMessage());
